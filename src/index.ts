@@ -40,8 +40,9 @@ class Webpack5CDNPlugin {
 
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       const { publicPath } = compilation.outputOptions;
-      if (publicPath && publicPath !== '/') {
-        throw `Error: do not set \`output.publicPath\`: ${publicPath}`;
+
+      if (publicPath) {
+        throw `Error: You should set publicPath to ""`;
       }
     });
 

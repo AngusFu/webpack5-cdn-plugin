@@ -1,5 +1,5 @@
 {
-  "name": "webpack5-cdn-plugin",
+  "name": "webpack-cdn-plugin-5",
   "version": "0.0.2",
   "description": "webpack plugin for uploading assets to you cdn",
   "main": "dist/index.js",
