@@ -1,0 +1,36 @@
+{
+  "name": "webpack5-cdn-plugin",
+  "version": "0.0.1",
+  "description": "webpack plugin for uploading assets to you cdn",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AngusFu/webpack5-cdn-plugin.git"
+  },
+  "keywords": [
+    "webpack",
+    "plugin",
+    "cdn"
+  ],
+  "author": "AngusFu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AngusFu/webpack5-cdn-plugin/issues"
+  },
+  "homepage": "https://github.com/AngusFu/webpack5-cdn-plugin#readme",
+  "devDependencies": {
+    "tsup": "^5.12.5",
+    "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "@types/webpack": "^5.28.0"
+  },
+  "peerDependencies": {
+    "webpack": "^5.0.0"
+  }
+}
