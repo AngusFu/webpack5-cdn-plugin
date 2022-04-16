@@ -84,7 +84,10 @@ class Webpack5CDNPlugin {
       const urlMap = new Map<string, string>();
       const getManifestJSON = (format?: boolean) => {
         return JSON.stringify(
-          Object.fromEntries(urlMap.entries()),
+          Object.fromEntries(
+            // as stable as possible
+            [...urlMap.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+          ),
           null,
           format ? 2 : undefined
         );
