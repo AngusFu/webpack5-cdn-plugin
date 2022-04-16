@@ -15,11 +15,12 @@ class Webpack5CDNPlugin {
 
   constructor(
     public options: {
+      keepLocalFiles?: boolean;
       manifestFilename?: boolean | string;
       uploadContent: (input: {
         file: string;
         content: string | Buffer;
-      }) => Promise<string>;
+      }) => Promise<string | null | undefined>;
     }
   ) {}
 
@@ -29,12 +30,16 @@ class Webpack5CDNPlugin {
       return;
     }
 
-    const { pluginName } = this;
-    const { manifestFilename, uploadContent } = this.options;
+    const {
+      pluginName,
+      options: { manifestFilename, uploadContent, keepLocalFiles = true },
+    } = this;
 
     const fs = compiler.outputFileSystem;
-    const { Compilation } = compiler.webpack;
-    const { RawSource } = compiler.webpack.sources;
+    const {
+      Compilation,
+      sources: { RawSource },
+    } = compiler.webpack;
 
     const assetMap = new Map<string, string | Buffer>();
 
@@ -93,8 +98,17 @@ class Webpack5CDNPlugin {
         );
       };
 
-      const overwrite = (name: string, content: string | Buffer) => {
-        return new Promise((resolve, reject) => {
+      const unlink = (name: string) =>
+        new Promise((resolve, reject) => {
+          fs.unlink?.(stats.outputPath + '/' + name, (err) => {
+            if (err) {
+              reject(err);
+            }
+            resolve(null);
+          });
+        });
+      const overwrite = (name: string, content: string | Buffer) =>
+        new Promise((resolve, reject) => {
           fs.writeFile(stats.outputPath + '/' + name, content, (err) => {
             if (err) {
               reject(err);
@@ -102,7 +116,6 @@ class Webpack5CDNPlugin {
             resolve(null);
           });
         });
-      };
 
       const uploadFile = async (
         name: string,
@@ -112,11 +125,16 @@ class Webpack5CDNPlugin {
         if (shouldOverwrite) {
           await overwrite(name, content);
         }
-        urlMap.set(
-          name,
-          // TODO error handling
-          await uploadContent({ file: name, content })
-        );
+
+        const url = await uploadContent({ file: name, content });
+
+        if (url && typeof url === 'string') {
+          urlMap.set(name, url);
+
+          if (!keepLocalFiles) {
+            await unlink(name);
+          }
+        }
       };
 
       const [epNames, styleNames, htmlNames, resourceNames] = [
@@ -131,12 +149,14 @@ class Webpack5CDNPlugin {
             epNames.add(name)
           );
         });
-        stats.assets?.forEach(({ name }) => {
-          if (epNames.has(name)) return;
-          else if (name.endsWith('.css')) styleNames.add(name);
-          else if (name.endsWith('.html')) htmlNames.add(name);
-          else resourceNames.add(name);
-        });
+        stats.assets
+          ?.filter(({ name }) => !name.endsWith('.map'))
+          ?.forEach(({ name }) => {
+            if (epNames.has(name)) return;
+            else if (name.endsWith('.css')) styleNames.add(name);
+            else if (name.endsWith('.html')) htmlNames.add(name);
+            else resourceNames.add(name);
+          });
       }
 
       await Promise.all(
@@ -187,8 +207,6 @@ class Webpack5CDNPlugin {
           getManifestJSON(true)
         );
       }
-
-      // TODO support `keepLocalFiles` `backupHTMLFiles`
     });
 
     compiler.hooks.done.tap(pluginName, () => {

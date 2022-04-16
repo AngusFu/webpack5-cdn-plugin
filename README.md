@@ -19,13 +19,12 @@ module.exports = {
   plugins: [
     // ...
     new Webpack5CDNPlugin({
+      keepLocalFiles: false,
       manifestFilename: 'manifest.json',
       uploadContent({ file, content }) {
-        // 需要自己实现上传文件、重试、并发控制
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve(`http://127.0.0.1:8080/${file}`)
-          }, 200)
+        // TODO 需要自己实现上传文件、重试、并发控制
+        return uploadTaskManager.upload(content).then(result => {
+          return `http://127.0.0.1:8080/${result.hash_url}`
         })
       }
     })
