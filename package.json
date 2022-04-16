@@ -1,6 +1,6 @@
 {
   "name": "webpack5-cdn-plugin",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "webpack plugin for uploading assets to you cdn",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
