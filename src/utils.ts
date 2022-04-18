@@ -10,16 +10,24 @@ const ASSET_LOOKUP_DEF = `
 })();
 `;
 export const replacePublicPath = function (str: string) {
-  return str
-    .replace(
-      /__webpack_require__\.p\s*\=\s*["']/g,
-      (m) => `${ASSET_LOOKUP_DEF}\n${m}`
-    )
-    .replace(
-      /(?:__webpack_require__\.p\s*\+\s*)([^;\n]+?)(;?)$/gm,
-      (_, g1, g2) =>
-        `__webpack_require__.__asset__(${g1}, __webpack_require__)${g2}`
-    );
+  return (
+    str
+      .replace(
+        /__webpack_require__\.p\s*\=\s*["']/g,
+        (m) => `${ASSET_LOOKUP_DEF}\n${m}`
+      )
+      // 基于一个假设：本行后面没有其他多余内容
+      .replace(
+        /(?:\(__webpack_require__\.p\s*\+\s*)([^\n]+?)\)(;?)$/gm,
+        (_, g1, g2) =>
+          `__webpack_require__.__asset__(${g1}, __webpack_require__)${g2}`
+      )
+      .replace(
+        /(?:__webpack_require__\.p\s*\+\s*)([^\n]+?)(;?)$/gm,
+        (_, g1, g2) =>
+          `__webpack_require__.__asset__(${g1}, __webpack_require__)${g2}`
+      )
+  );
 };
 
 export const injectAssetManifest = function (content: string, json: string) {
