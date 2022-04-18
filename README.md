@@ -6,13 +6,13 @@
 
 ### Install
 ```
-npm i webpack-cdn-plugin-5 -D
+npm i webpack5-cdn-plugin -D
 ```
 
 ### Usage
 
 ```tsx
-const { Webpack5CDNPlugin } = require('webpack-cdn-plugin-5')
+const { Webpack5CDNPlugin } = require('webpack5-cdn-plugin')
 
 // webpack config
 module.exports = {

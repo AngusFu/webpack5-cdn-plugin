@@ -1,12 +1,12 @@
 {
-  "name": "webpack-cdn-plugin-5",
+  "name": "webpack5-cdn-plugin",
   "version": "0.0.4",
   "description": "webpack plugin for uploading assets to you cdn",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup src/index.ts",
-    "prepublish": "npm run build"
+    "prepublish": "bash ./pre-publish.sh"
   },
   "repository": {
     "type": "git",
