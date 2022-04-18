@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/AngusFu/webpack5-cdn-plugin/compare/v0.0.5...v0.0.6) (2022-04-18)
+
+
+### Features
+
+* support parentheses around `__webpack_require__.p + ...` ([30853f0](https://github.com/AngusFu/webpack5-cdn-plugin/commit/30853f0df98b55a360998f1a86cdc5d14a06c94d))
+
 ### [0.0.5](https://github.com/AngusFu/webpack5-cdn-plugin/compare/v0.0.4...v0.0.5) (2022-04-18)
 
 ### [0.0.4](https://github.com/AngusFu/webpack5-cdn-plugin/compare/v0.0.3...v0.0.4) (2022-04-16)
