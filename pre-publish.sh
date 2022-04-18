@@ -12,5 +12,5 @@ cd $DIR
 sed -i "" "s/webpack5-cdn-plugin/webpack-cdn-plugin-5/" README.md
 cat ../package.json | jq '.name="webpack-cdn-plugin-5" | del(.scripts.prepublish)' >package.json
 npm publish
-popd
+cd ..
 rm -rf $DIR
