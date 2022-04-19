@@ -22,6 +22,7 @@ class Webpack5CDNPlugin {
       uploadContent: (input: {
         file: string;
         content: string | Buffer;
+        extname: string;
       }) => Promise<string | null | undefined>;
     }
   ) {}
@@ -139,7 +140,13 @@ class Webpack5CDNPlugin {
           await overwrite(name, content);
         }
         const cacheUrl = urlCacheMap.get(md5(content));
-        const url = cacheUrl || (await uploadContent({ file: name, content }));
+        const url =
+          cacheUrl ||
+          (await uploadContent({
+            file: name,
+            content,
+            extname: path.extname(name),
+          }));
         if (url && typeof url === 'string') {
           urlMap.set(name, url);
           urlCacheMap.set(md5(content), url);
