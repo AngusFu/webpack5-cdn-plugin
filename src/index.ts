@@ -47,9 +47,7 @@ class Webpack5CDNPlugin {
     const assetMap = new Map<string, string | Buffer>();
 
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
-      const { publicPath } = compilation.outputOptions;
-
-      if (publicPath) {
+      if (compilation.outputOptions.publicPath) {
         throw `Error: You should set publicPath to ""`;
       }
     });
@@ -76,9 +74,7 @@ class Webpack5CDNPlugin {
     });
 
     compiler.hooks.emit.tap(pluginName, (compilation) => {
-      const assets = compilation.getAssets();
-
-      assets.forEach((asset) => {
+      compilation.getAssets().forEach((asset) => {
         const source = asset.source.source();
         const isText = /\.(js|css|html)$/.test(asset.name);
 
@@ -90,8 +86,8 @@ class Webpack5CDNPlugin {
       const stats = compilation.getStats().toJson();
 
       const urlMap = new Map<string, string>();
-      const getManifestJSON = (format?: boolean) => {
-        return JSON.stringify(
+      const getManifestJSON = (format?: boolean) =>
+        JSON.stringify(
           Object.fromEntries(
             // as stable as possible
             [...urlMap.entries()].sort((a, b) => a[0].localeCompare(b[0]))
@@ -99,7 +95,6 @@ class Webpack5CDNPlugin {
           null,
           format ? 2 : undefined
         );
-      };
 
       const unlink = (name: string) =>
         new Promise((resolve, reject) => {
@@ -156,9 +151,9 @@ class Webpack5CDNPlugin {
             epNames.add(name)
           );
         });
-        stats.assets
-          ?.filter(({ name }) => !name.endsWith('.map'))
-          ?.forEach(({ name }) => {
+        (stats.assets || [])
+          .filter(({ name }) => !name.endsWith('.map'))
+          .forEach(({ name }) => {
             if (epNames.has(name)) return;
             else if (name.endsWith('.css')) styleNames.add(name);
             else if (name.endsWith('.html')) htmlNames.add(name);
