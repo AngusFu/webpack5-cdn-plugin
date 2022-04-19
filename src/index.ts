@@ -24,6 +24,9 @@ class Webpack5CDNPlugin {
         extname: string;
         content: string | Buffer;
       }) => Promise<string | null | undefined>;
+
+      before(): void;
+      done?(): void;
     }
   ) {}
 
@@ -35,7 +38,13 @@ class Webpack5CDNPlugin {
 
     const {
       pluginName,
-      options: { manifestFilename, uploadContent, keepLocalFiles = true },
+      options: {
+        before,
+        done,
+        manifestFilename,
+        uploadContent,
+        keepLocalFiles = true,
+      },
     } = this;
 
     const fs = compiler.outputFileSystem;
@@ -45,6 +54,10 @@ class Webpack5CDNPlugin {
     } = compiler.webpack;
 
     const assetMap = new Map<string, string | Buffer>();
+
+    compiler.hooks.beforeRun.tap(pluginName, () => {
+      before?.();
+    });
 
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       if (compilation.outputOptions.publicPath) {
@@ -214,6 +227,7 @@ class Webpack5CDNPlugin {
     compiler.hooks.done.tap(pluginName, () => {
       // clean up
       assetMap.forEach((_, key) => assetMap.delete(key));
+      done?.();
     });
   }
 }
