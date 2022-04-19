@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/AngusFu/webpack5-cdn-plugin/compare/v0.0.6...v0.0.7) (2022-04-19)
+
+
+### Features
+
+* add extname for uploadContent() ([4fffe12](https://github.com/AngusFu/webpack5-cdn-plugin/commit/4fffe1269110d7428637be0a5f577ecaaf284080))
+
 ### [0.0.6](https://github.com/AngusFu/webpack5-cdn-plugin/compare/v0.0.5...v0.0.6) (2022-04-18)
 
 
