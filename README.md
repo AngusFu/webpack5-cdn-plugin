@@ -24,23 +24,25 @@ module.exports = {
       keepLocalFiles: false,
       manifestFilename: 'manifest.json',
       uploadContent({ file, extname, content }) {
-        // TODO 需要自己实现上传文件、重试、并发控制
-        const hash = md5(content);
+        const hash = md5(content)
         
-        if (cache[hash]) {
-          return cache[hash]
+        if (cacheData.has(hash)) {
+          return Promise.resolve(cacheData.get(hash))
         }
 
-        return uploadTaskManager.upload(content).then(result => {
-          cache[hash] = result.url
-          return `http://127.0.0.1:8080/${result.url}`
-        })
+        // NOTE 需要自己实现上传文件、重试、并发控制
+        return uploadTaskManager
+          .upload(content)
+          .then(result => {
+            cacheData.set(hash, result.url)
+            return result.url
+          })
       },
       before() {
-        cacheData = readCache();
+        cacheData = readCache()
       },
       done() {
-        persistCache(cacheData);
+        persistCache(cacheData)
       }
     })
   ]
