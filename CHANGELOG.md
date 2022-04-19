@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/AngusFu/webpack5-cdn-plugin/compare/v0.0.7...v0.0.8) (2022-04-19)
+
+
+### Features
+
+* expose before/done lifecycles ([69f9dd6](https://github.com/AngusFu/webpack5-cdn-plugin/commit/69f9dd60f10a1df20eaf9b7322213d765be93182))
+
 ### [0.0.7](https://github.com/AngusFu/webpack5-cdn-plugin/compare/v0.0.6...v0.0.7) (2022-04-19)
 
 
