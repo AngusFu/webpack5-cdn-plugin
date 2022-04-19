@@ -25,7 +25,7 @@ class Webpack5CDNPlugin {
         content: string | Buffer;
       }) => Promise<string | null | undefined>;
 
-      before(): void;
+      before?(): void;
       done?(): void;
     }
   ) {}
