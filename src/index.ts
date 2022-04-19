@@ -5,7 +5,9 @@ import {
   replacePublicPath,
 } from './utils';
 import { Compiler } from 'webpack';
-
+import md5 from 'md5';
+import path from 'path';
+import fs from 'fs';
 /**
  * 1. webworker: not supported
  * 2. module federation: not tested
@@ -34,15 +36,26 @@ class Webpack5CDNPlugin {
       pluginName,
       options: { manifestFilename, uploadContent, keepLocalFiles = true },
     } = this;
+    const outputPath: string = compiler.options.output.path as string;
+    const cacheLocalPath = path.join(outputPath, '.webpack-cdn-cache');
 
-    const fs = compiler.outputFileSystem;
+    // const fs = compiler.outputFileSystem;
     const {
       Compilation,
       sources: { RawSource },
     } = compiler.webpack;
 
     const assetMap = new Map<string, string | Buffer>();
+    let urlCacheMap = new Map<string, string>();
 
+    compiler.hooks.initialize.tap(pluginName, () => {
+      // read cache url from local
+      if (fs.existsSync(cacheLocalPath)) {
+        urlCacheMap = new Map(
+          Object.entries(JSON.parse(fs.readFileSync(cacheLocalPath).toString()))
+        );
+      }
+    });
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       const { publicPath } = compilation.outputOptions;
 
@@ -125,12 +138,11 @@ class Webpack5CDNPlugin {
         if (shouldOverwrite) {
           await overwrite(name, content);
         }
-
-        const url = await uploadContent({ file: name, content });
-
+        const cacheUrl = urlCacheMap.get(md5(content));
+        const url = cacheUrl || (await uploadContent({ file: name, content }));
         if (url && typeof url === 'string') {
           urlMap.set(name, url);
-
+          urlCacheMap.set(md5(content), url);
           if (!keepLocalFiles) {
             await unlink(name);
           }
@@ -210,6 +222,11 @@ class Webpack5CDNPlugin {
     });
 
     compiler.hooks.done.tap(pluginName, () => {
+      // cache url to local
+      fs.writeFileSync(
+        cacheLocalPath,
+        JSON.stringify(Object.fromEntries(urlCacheMap.entries()))
+      );
       // clean up
       assetMap.forEach((_, key) => assetMap.delete(key));
     });
