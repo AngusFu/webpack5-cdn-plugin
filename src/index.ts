@@ -1,10 +1,12 @@
+import { extname } from 'path';
+import { Compiler } from 'webpack';
+
 import {
   injectAssetManifest,
   interpolateHTMLAssets,
   replaceCSSUrls,
   replacePublicPath,
 } from './utils';
-import { Compiler } from 'webpack';
 
 /**
  * 1. webworker: not supported
@@ -19,6 +21,7 @@ class Webpack5CDNPlugin {
       manifestFilename?: boolean | string;
       uploadContent: (input: {
         file: string;
+        extname: string;
         content: string | Buffer;
       }) => Promise<string | null | undefined>;
     }
@@ -126,7 +129,11 @@ class Webpack5CDNPlugin {
           await overwrite(name, content);
         }
 
-        const url = await uploadContent({ file: name, content });
+        const url = await uploadContent({
+          file: name,
+          content,
+          extname: extname(name),
+        });
 
         if (url && typeof url === 'string') {
           urlMap.set(name, url);

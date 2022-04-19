@@ -21,7 +21,7 @@ module.exports = {
     new Webpack5CDNPlugin({
       keepLocalFiles: false,
       manifestFilename: 'manifest.json',
-      uploadContent({ file, content }) {
+      uploadContent({ file, extname, content }) {
         // TODO 需要自己实现上传文件、重试、并发控制
         return uploadTaskManager.upload(content).then(result => {
           return `http://127.0.0.1:8080/${result.hash_url}`
