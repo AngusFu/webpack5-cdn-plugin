@@ -31,6 +31,7 @@ module.exports = {
         }
 
         // NOTE 需要自己实现上传文件、重试、并发控制
+        // demo: https://gist.github.com/AngusFu/b99b0ffb001b0bf4009d09b5e3b041d6
         return uploadTaskManager
           .upload(content)
           .then(result => {
